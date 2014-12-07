@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/global_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
@@ -14,13 +15,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Create New Point of Interest"
+            android:textSize="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:layout_gravity="center" />
-
-        <Button
-            android:id="@+id/create_btn"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/location_name"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Create POI"/>
+            android:hint="Name of Location"/>
+        <EditText
+            android:id="@+id/description"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"/>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+            <Button
+                android:id="@+id/save_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"/>
+            <Button
+                android:id="@+id/cancel_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel"/>
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>
