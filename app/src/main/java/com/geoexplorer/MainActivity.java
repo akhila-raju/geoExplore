@@ -1,5 +1,6 @@
 package com.geoexplorer;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import android.app.Activity;
@@ -87,6 +88,19 @@ public class MainActivity extends Activity {
         init();
 
         install();
+
+        HashMap<String,String> newCardData = (HashMap<String,String>)getIntent().getSerializableExtra("newCard");
+        if (newCardData != null) {
+            SimpleTextCard newCard = new SimpleTextCard("newcard" + Integer.toString(mRemoteDeckOfCards.getListCard().size()));
+            newCard.setHeaderText(newCardData.get("name"));
+            String messages[] = new String[1];
+            messages[0] = newCardData.get("description");
+            newCard.setMessageText(messages);
+            mRemoteDeckOfCards.getListCard().add(newCard);
+            try {
+                mDeckOfCardsManager.updateDeckOfCards(mRemoteDeckOfCards);
+            } catch (RemoteDeckOfCardsException e) {}
+        }
     }
 
     private void install() {

@@ -11,19 +11,28 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 public class AddPOIActivity extends Activity {
 
+    private EditText locationName, description;
     private Button createBtn, backBtn;
     private LinearLayout globalScreen;
 
     private OnClickListener mCreatePOIClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Sup", Toast.LENGTH_SHORT).show();
+            HashMap<String,String> newCard = new HashMap<String, String>();
+            newCard.put("name", locationName.getText().toString());
+            newCard.put("description", description.getText().toString());
+            Intent intent = new Intent(AddPOIActivity.this, MainActivity.class);
+            intent.putExtra("newCard", newCard);
+            startActivity(intent);
         }
     };
     private OnClickListener mGlobalClickListener = new OnClickListener() {
@@ -34,6 +43,8 @@ public class AddPOIActivity extends Activity {
         }
     };
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +52,9 @@ public class AddPOIActivity extends Activity {
 
         globalScreen = (LinearLayout)findViewById(R.id.global_screen);
         globalScreen.setOnClickListener(mGlobalClickListener);
+
+        locationName = (EditText)findViewById(R.id.location_name);
+        description = (EditText)findViewById(R.id.description);
 
         createBtn = (Button)findViewById(R.id.save_btn);
         createBtn.setOnClickListener(mCreatePOIClickListener);
