@@ -37,6 +37,17 @@ public class MainActivity extends Activity {
 
     private class DeckOfCardsEventListenerImpl implements DeckOfCardsEventListener{
         public void onCardOpen(final String cardId){
+            if (cardId.equals("card0")) {
+                ListCard listCard = mRemoteDeckOfCards.getListCard();
+                SimpleTextCard headerCard = (SimpleTextCard) listCard.get(cardId);
+                String[] messageTxt = new String[1];
+                messageTxt[0] = "At your earliest convenience use your phone to update the Point of Interest's information.";
+                headerCard.setMessageText(messageTxt);
+                headerCard.setTitleText("Location Saved!");
+                try {
+                    mDeckOfCardsManager.updateDeckOfCards(mRemoteDeckOfCards);
+                } catch (RemoteDeckOfCardsException e) {}
+            }
             runOnUiThread(new Runnable(){
                 public void run(){
                     Intent intent = new Intent(MainActivity.this, AddPOIActivity.class);
@@ -46,7 +57,19 @@ public class MainActivity extends Activity {
         }
         public void onCardVisible(final String cardId){}
         public void onCardInvisible(final String cardId){}
-        public void onCardClosed(final String cardId){}
+        public void onCardClosed(final String cardId) {
+            if (cardId.equals("card0")) {
+                ListCard listCard = mRemoteDeckOfCards.getListCard();
+                SimpleTextCard headerCard = (SimpleTextCard) listCard.get(cardId);
+                String[] messageTxt = new String[1];
+                messageTxt[0] = "";
+                headerCard.setMessageText(messageTxt);
+                headerCard.setTitleText("");
+                try {
+                    mDeckOfCardsManager.updateDeckOfCards(mRemoteDeckOfCards);
+                } catch (RemoteDeckOfCardsException e) {}
+            }
+        }
         public void onMenuOptionSelected(final String cardId, final String menuOption){}
         public void onMenuOptionSelected(final String cardId, final String menuOption, final String quickReplyOption){}
     }
@@ -83,10 +106,7 @@ public class MainActivity extends Activity {
         }
         ListCard listCard = mRemoteDeckOfCards.getListCard();
         SimpleTextCard simpleTextCard = (SimpleTextCard) listCard.childAtIndex(0);
-        simpleTextCard.setHeaderText("Create New Point of Interest");
-        String[] messageTxt = new String[1];
-        messageTxt[0] = "Location Saved! At your earliest convenience use your phone to update the POI's information.";
-        simpleTextCard.setMessageText(messageTxt);
+        simpleTextCard.setHeaderText("Create New POI");
         simpleTextCard.setReceivingEvents(true);
         simpleTextCard.setShowDivider(true);
     }
