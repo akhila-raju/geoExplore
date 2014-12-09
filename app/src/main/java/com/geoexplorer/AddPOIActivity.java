@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 public class AddPOIActivity extends Activity {
 
     private EditText locationName, description;
+    private SeekBar difficultyBar;
     private Button createBtn, backBtn;
     private LinearLayout globalScreen;
 
@@ -30,6 +32,7 @@ public class AddPOIActivity extends Activity {
             HashMap<String,String> newCard = new HashMap<String, String>();
             newCard.put("name", locationName.getText().toString());
             newCard.put("description", description.getText().toString());
+            newCard.put("difficulty", Integer.toString(difficultyBar.getProgress()));
             Intent intent = new Intent(AddPOIActivity.this, MainActivity.class);
             intent.putExtra("newCard", newCard);
             startActivity(intent);
@@ -54,6 +57,7 @@ public class AddPOIActivity extends Activity {
         globalScreen.setOnClickListener(mGlobalClickListener);
 
         locationName = (EditText)findViewById(R.id.location_name);
+        difficultyBar = (SeekBar)findViewById(R.id.difficulty_bar);
         description = (EditText)findViewById(R.id.description);
 
         createBtn = (Button)findViewById(R.id.save_btn);

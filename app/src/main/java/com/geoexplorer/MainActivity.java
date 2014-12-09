@@ -91,16 +91,24 @@ public class MainActivity extends Activity {
 
         HashMap<String,String> newCardData = (HashMap<String,String>)getIntent().getSerializableExtra("newCard");
         if (newCardData != null) {
-            SimpleTextCard newCard = new SimpleTextCard("newcard" + Integer.toString(mRemoteDeckOfCards.getListCard().size()));
-            newCard.setHeaderText(newCardData.get("name"));
-            String messages[] = new String[1];
-            messages[0] = newCardData.get("description");
-            newCard.setMessageText(messages);
-            mRemoteDeckOfCards.getListCard().add(newCard);
-            try {
-                mDeckOfCardsManager.updateDeckOfCards(mRemoteDeckOfCards);
-            } catch (RemoteDeckOfCardsException e) {}
+            addDestinationCard(newCardData.get("name"),newCardData.get("description"),newCardData.get("difficulty"),"10 mi","90 min");
         }
+    }
+
+    private SimpleTextCard addDestinationCard(String name, String description, String difficulty, String distance, String eta) {
+        SimpleTextCard newCard = new SimpleTextCard("newcard" + Integer.toString(mRemoteDeckOfCards.getListCard().size()));
+        newCard.setHeaderText(name);
+        String messages[] = new String[4];
+        messages[0] = "Distance: " + distance;
+        messages[1] = "Difficulty: " + difficulty;
+        messages[2] = "ETA: " + eta;
+        messages[3] = description;
+        newCard.setMessageText(messages);
+        mRemoteDeckOfCards.getListCard().add(newCard);
+        try {
+            mDeckOfCardsManager.updateDeckOfCards(mRemoteDeckOfCards);
+        } catch (RemoteDeckOfCardsException e) {}
+        return newCard;
     }
 
     private void install() {
@@ -123,6 +131,7 @@ public class MainActivity extends Activity {
         simpleTextCard.setHeaderText("Create New POI");
         simpleTextCard.setReceivingEvents(true);
         simpleTextCard.setShowDivider(true);
+        addDestinationCard("Campanile","A famous bell tower in Berkeley. A must see!","1","0.5 mi","10 min");
     }
 
     private RemoteDeckOfCards createDeckOfCards() {
