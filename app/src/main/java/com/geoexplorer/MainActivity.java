@@ -12,12 +12,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
 import com.qualcomm.toq.smartwatch.api.v1.deckofcards.DeckOfCardsEventListener;
+import com.qualcomm.toq.smartwatch.api.v1.deckofcards.ResourceStoreException;
 import com.qualcomm.toq.smartwatch.api.v1.deckofcards.card.ListCard;
 import com.qualcomm.toq.smartwatch.api.v1.deckofcards.card.NotificationTextCard;
 import com.qualcomm.toq.smartwatch.api.v1.deckofcards.card.SimpleTextCard;
@@ -35,6 +37,8 @@ public class MainActivity extends Activity {
     private RemoteDeckOfCards mRemoteDeckOfCards;
     private RemoteResourceStore mRemoteResourceStore;
     private DeckOfCardsEventListener mEventListener;
+    private ImageView img;
+    private int uniqueID = 0;
 
     private class DeckOfCardsEventListenerImpl implements DeckOfCardsEventListener{
         public void onCardOpen(final String cardId){
@@ -75,6 +79,11 @@ public class MainActivity extends Activity {
         public void onMenuOptionSelected(final String cardId, final String menuOption, final String quickReplyOption){}
     }
 
+    private int getUniqueID() {
+        uniqueID += 1;
+        return uniqueID;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,18 +94,20 @@ public class MainActivity extends Activity {
         mEventListener = new DeckOfCardsEventListenerImpl();
         mDeckOfCardsManager.addDeckOfCardsEventListener(mEventListener);
 
+        img = (ImageView)findViewById(R.id.img);
+
         init();
 
         install();
 
         HashMap<String,String> newCardData = (HashMap<String,String>)getIntent().getSerializableExtra("newCard");
         if (newCardData != null) {
-            addDestinationCard(newCardData.get("name"),newCardData.get("description"),newCardData.get("difficulty"),"10 mi","90 min");
+            addDestinationCard(newCardData.get("name"),newCardData.get("description"),newCardData.get("difficulty"),"10 mi","90 min",newCardData.get("imagePath"));
         }
     }
 
-    private SimpleTextCard addDestinationCard(String name, String description, String difficulty, String distance, String eta) {
-        SimpleTextCard newCard = new SimpleTextCard("newcard" + Integer.toString(mRemoteDeckOfCards.getListCard().size()));
+    private SimpleTextCard addDestinationCard(String name, String description, String difficulty, String distance, String eta, String imagePath) {
+        SimpleTextCard newCard = new SimpleTextCard("newcard" + getUniqueID());
         newCard.setHeaderText(name);
         String messages[] = new String[4];
         messages[0] = "Distance: " + distance;
@@ -104,9 +115,14 @@ public class MainActivity extends Activity {
         messages[2] = "ETA: " + eta;
         messages[3] = description;
         newCard.setMessageText(messages);
+        if (imagePath != null) {
+            Bitmap image = BitmapFactory.decodeFile(imagePath);
+            Bitmap scaledImage = Bitmap.createScaledBitmap(image, 250, 288, false);
+            newCard.setCardImage(mRemoteResourceStore, new CardImage("image" + Integer.toString(getUniqueID()), scaledImage));
+        }
         mRemoteDeckOfCards.getListCard().add(newCard);
         try {
-            mDeckOfCardsManager.updateDeckOfCards(mRemoteDeckOfCards);
+            mDeckOfCardsManager.updateDeckOfCards(mRemoteDeckOfCards, mRemoteResourceStore);
         } catch (RemoteDeckOfCardsException e) {}
         return newCard;
     }
@@ -131,7 +147,7 @@ public class MainActivity extends Activity {
         simpleTextCard.setHeaderText("Create New POI");
         simpleTextCard.setReceivingEvents(true);
         simpleTextCard.setShowDivider(true);
-        addDestinationCard("Campanile","A famous bell tower in Berkeley. A must see!","1","0.5 mi","10 min");
+        addDestinationCard("Campanile","A famous bell tower in Berkeley. A must see!","1","0.5 mi","10 min",null);
     }
 
     private RemoteDeckOfCards createDeckOfCards() {

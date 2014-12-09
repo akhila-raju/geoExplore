@@ -29,6 +29,7 @@ public class AddPOIActivity extends Activity {
     private EditText locationName, description;
     private SeekBar difficultyBar;
     private ImageView imageUpload;
+    private String imagePath;
     private Button createBtn, backBtn;
     private LinearLayout globalScreen;
     private static int RESULT_LOAD_IMAGE = 1;
@@ -40,6 +41,7 @@ public class AddPOIActivity extends Activity {
             newCard.put("name", locationName.getText().toString());
             newCard.put("description", description.getText().toString());
             newCard.put("difficulty", Integer.toString(difficultyBar.getProgress()));
+            newCard.put("imagePath", imagePath);
             Intent intent = new Intent(AddPOIActivity.this, MainActivity.class);
             intent.putExtra("newCard", newCard);
             startActivity(intent);
@@ -75,6 +77,7 @@ public class AddPOIActivity extends Activity {
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
 
+            imagePath = picturePath;
             imageUpload.setImageBitmap(BitmapFactory.decodeFile(picturePath));
         }
     }
@@ -92,6 +95,7 @@ public class AddPOIActivity extends Activity {
         description = (EditText)findViewById(R.id.description);
         imageUpload = (ImageView)findViewById(R.id.image_upload);
         imageUpload.setOnClickListener(mImageUploadClickListener);
+        imagePath = null;
 
         createBtn = (Button)findViewById(R.id.save_btn);
         createBtn.setOnClickListener(mCreatePOIClickListener);
