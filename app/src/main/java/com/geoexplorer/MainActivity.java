@@ -115,6 +115,8 @@ public class MainActivity extends Activity {
         if (cardList == null) {
             cardList = new ArrayList<HashMap<String,String>>();
         }
+        boolean canCreate = getIntent().getBooleanExtra("canCreate", false);
+        if (canCreate) { numPOIs = 1; }
 
         init();
 

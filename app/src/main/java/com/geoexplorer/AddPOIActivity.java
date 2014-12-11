@@ -36,6 +36,13 @@ public class AddPOIActivity extends Activity {
     private static int RESULT_LOAD_IMAGE = 1;
     private ArrayList<HashMap<String,String>> cardList;
 
+    private void returnToMain(boolean cancel) {
+        Intent intent = new Intent(AddPOIActivity.this, MainActivity.class);
+        intent.putExtra("cardList", cardList);
+        intent.putExtra("canCreate", cancel);
+        startActivity(intent);
+    }
+
     private OnClickListener mCreatePOIClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -45,9 +52,13 @@ public class AddPOIActivity extends Activity {
             newCard.put("difficulty", Integer.toString(difficultyBar.getProgress()));
             newCard.put("imagePath", imagePath);
             cardList.add(newCard);
-            Intent intent = new Intent(AddPOIActivity.this, MainActivity.class);
-            intent.putExtra("cardList", cardList);
-            startActivity(intent);
+            returnToMain(false);
+        }
+    };
+    private OnClickListener mCancelClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            returnToMain(true);
         }
     };
     private OnClickListener mImageUploadClickListener = new OnClickListener() {
@@ -102,6 +113,8 @@ public class AddPOIActivity extends Activity {
 
         createBtn = (Button)findViewById(R.id.save_btn);
         createBtn.setOnClickListener(mCreatePOIClickListener);
+        backBtn = (Button)findViewById(R.id.cancel_btn);
+        backBtn.setOnClickListener(mCancelClickListener);
 
         cardList = (ArrayList<HashMap<String,String>>)getIntent().getSerializableExtra("cardList");
     }
