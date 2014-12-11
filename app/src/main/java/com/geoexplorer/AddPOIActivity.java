@@ -16,6 +16,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -31,7 +32,7 @@ public class AddPOIActivity extends Activity {
     private SeekBar difficultyBar;
     private ImageView imageUpload;
     private String imagePath;
-    private Button createBtn, backBtn;
+    private ImageButton createBtn, backBtn;
     private LinearLayout globalScreen;
     private static int RESULT_LOAD_IMAGE = 1;
     private ArrayList<HashMap<String,String>> cardList;
@@ -111,9 +112,9 @@ public class AddPOIActivity extends Activity {
         imageUpload.setOnClickListener(mImageUploadClickListener);
         imagePath = "";
 
-        createBtn = (Button)findViewById(R.id.save_btn);
+        createBtn = (ImageButton)findViewById(R.id.save_btn);
         createBtn.setOnClickListener(mCreatePOIClickListener);
-        backBtn = (Button)findViewById(R.id.cancel_btn);
+        backBtn = (ImageButton)findViewById(R.id.cancel_btn);
         backBtn.setOnClickListener(mCancelClickListener);
 
         cardList = (ArrayList<HashMap<String,String>>)getIntent().getSerializableExtra("cardList");
