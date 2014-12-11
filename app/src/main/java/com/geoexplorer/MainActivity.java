@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.location.Location;
@@ -37,8 +38,9 @@ public class MainActivity extends Activity {
     private RemoteDeckOfCards mRemoteDeckOfCards;
     private RemoteResourceStore mRemoteResourceStore;
     private DeckOfCardsEventListener mEventListener;
-    private ImageView img;
+    private Button createPOIBtn;
     private int uniqueID = 0;
+    private int numPOIs = 0;
 
     private class DeckOfCardsEventListenerImpl implements DeckOfCardsEventListener{
         public void onCardOpen(final String cardId){
@@ -49,16 +51,11 @@ public class MainActivity extends Activity {
                 messageTxt[0] = "At your earliest convenience use your phone to update the Point of Interest's information.";
                 headerCard.setMessageText(messageTxt);
                 headerCard.setTitleText("Location Saved!");
+                numPOIs += 1;
                 try {
                     mDeckOfCardsManager.updateDeckOfCards(mRemoteDeckOfCards);
                 } catch (RemoteDeckOfCardsException e) {}
             }
-            runOnUiThread(new Runnable(){
-                public void run(){
-                    Intent intent = new Intent(MainActivity.this, AddPOIActivity.class);
-                    startActivity(intent);
-                }
-            });
         }
         public void onCardVisible(final String cardId){}
         public void onCardInvisible(final String cardId){}
@@ -79,6 +76,22 @@ public class MainActivity extends Activity {
         public void onMenuOptionSelected(final String cardId, final String menuOption, final String quickReplyOption){}
     }
 
+    private View.OnClickListener mCreatePOIOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (numPOIs > 0) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Intent intent = new Intent(MainActivity.this, AddPOIActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            } else {
+                Toast.makeText(getApplicationContext(), "No positions saved yet! Please save one using your Toq.", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
     private int getUniqueID() {
         uniqueID += 1;
         return uniqueID;
@@ -90,11 +103,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toq);
 
+        createPOIBtn = (Button)findViewById(R.id.create_btn);
+        createPOIBtn.setOnClickListener(mCreatePOIOnClickListener);
         mDeckOfCardsManager = DeckOfCardsManager.getInstance(getApplicationContext());
         mEventListener = new DeckOfCardsEventListenerImpl();
         mDeckOfCardsManager.addDeckOfCardsEventListener(mEventListener);
-
-        img = (ImageView)findViewById(R.id.img);
 
         init();
 
