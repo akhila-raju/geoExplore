@@ -22,6 +22,7 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AddPOIActivity extends Activity {
@@ -33,6 +34,7 @@ public class AddPOIActivity extends Activity {
     private Button createBtn, backBtn;
     private LinearLayout globalScreen;
     private static int RESULT_LOAD_IMAGE = 1;
+    private ArrayList<HashMap<String,String>> cardList;
 
     private OnClickListener mCreatePOIClickListener = new OnClickListener() {
         @Override
@@ -42,8 +44,9 @@ public class AddPOIActivity extends Activity {
             newCard.put("description", description.getText().toString());
             newCard.put("difficulty", Integer.toString(difficultyBar.getProgress()));
             newCard.put("imagePath", imagePath);
+            cardList.add(newCard);
             Intent intent = new Intent(AddPOIActivity.this, MainActivity.class);
-            intent.putExtra("newCard", newCard);
+            intent.putExtra("cardList", cardList);
             startActivity(intent);
         }
     };
@@ -95,10 +98,12 @@ public class AddPOIActivity extends Activity {
         description = (EditText)findViewById(R.id.description);
         imageUpload = (ImageView)findViewById(R.id.image_upload);
         imageUpload.setOnClickListener(mImageUploadClickListener);
-        imagePath = null;
+        imagePath = "";
 
         createBtn = (Button)findViewById(R.id.save_btn);
         createBtn.setOnClickListener(mCreatePOIClickListener);
+
+        cardList = (ArrayList<HashMap<String,String>>)getIntent().getSerializableExtra("cardList");
     }
 
 }

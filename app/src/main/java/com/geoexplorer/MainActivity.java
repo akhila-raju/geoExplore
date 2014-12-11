@@ -1,5 +1,6 @@
 package com.geoexplorer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -39,6 +40,7 @@ public class MainActivity extends Activity {
     private RemoteResourceStore mRemoteResourceStore;
     private DeckOfCardsEventListener mEventListener;
     private Button createPOIBtn;
+    private ArrayList<HashMap<String,String>> cardList;
     private int uniqueID = 0;
     private int numPOIs = 0;
 
@@ -83,6 +85,7 @@ public class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     public void run() {
                         Intent intent = new Intent(MainActivity.this, AddPOIActivity.class);
+                        intent.putExtra("cardList", cardList);
                         startActivity(intent);
                     }
                 });
@@ -108,18 +111,28 @@ public class MainActivity extends Activity {
         mDeckOfCardsManager = DeckOfCardsManager.getInstance(getApplicationContext());
         mEventListener = new DeckOfCardsEventListenerImpl();
         mDeckOfCardsManager.addDeckOfCardsEventListener(mEventListener);
+        cardList = (ArrayList<HashMap<String,String>>)getIntent().getSerializableExtra("cardList");
+        if (cardList == null) {
+            cardList = new ArrayList<HashMap<String,String>>();
+        }
 
         init();
 
         install();
 
-        HashMap<String,String> newCardData = (HashMap<String,String>)getIntent().getSerializableExtra("newCard");
-        if (newCardData != null) {
-            addDestinationCard(newCardData.get("name"),newCardData.get("description"),newCardData.get("difficulty"),"10 mi","90 min",newCardData.get("imagePath"));
+        for (HashMap<String,String> newCardData : cardList) {
+            addDestinationCard(newCardData.get("name"), newCardData.get("description"), newCardData.get("difficulty"), "10 mi", "90 min", newCardData.get("imagePath"));
         }
     }
 
     private SimpleTextCard addDestinationCard(String name, String description, String difficulty, String distance, String eta, String imagePath) {
+        Bitmap image = null;
+        if (!imagePath.equals("")) {
+            image = BitmapFactory.decodeFile(imagePath);
+        }
+        return addDestinationCard(name, description, difficulty, distance, eta, image);
+    }
+    private SimpleTextCard addDestinationCard(String name, String description, String difficulty, String distance, String eta, Bitmap image) {
         SimpleTextCard newCard = new SimpleTextCard("newcard" + getUniqueID());
         newCard.setHeaderText(name);
         String messages[] = new String[4];
@@ -128,8 +141,7 @@ public class MainActivity extends Activity {
         messages[2] = "ETA: " + eta;
         messages[3] = description;
         newCard.setMessageText(messages);
-        if (imagePath != null) {
-            Bitmap image = BitmapFactory.decodeFile(imagePath);
+        if (image != null) {
             Bitmap scaledImage = Bitmap.createScaledBitmap(image, 250, 288, false);
             newCard.setCardImage(mRemoteResourceStore, new CardImage("image" + Integer.toString(getUniqueID()), scaledImage));
         }
@@ -139,6 +151,7 @@ public class MainActivity extends Activity {
         } catch (RemoteDeckOfCardsException e) {}
         return newCard;
     }
+
 
     private void install() {
         updateDeckOfCardsFromUI();
@@ -160,7 +173,7 @@ public class MainActivity extends Activity {
         simpleTextCard.setHeaderText("Create New POI");
         simpleTextCard.setReceivingEvents(true);
         simpleTextCard.setShowDivider(true);
-        addDestinationCard("Campanile","A famous bell tower in Berkeley. A must see!","1","0.5 mi","10 min",null);
+        addDestinationCard("Campanile","A famous bell tower in Berkeley. A must see!","1","0.5 mi","10 min",BitmapFactory.decodeResource(this.getApplicationContext().getResources(), R.drawable.campanile));
     }
 
     private RemoteDeckOfCards createDeckOfCards() {
